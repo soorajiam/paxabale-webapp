@@ -1,16 +1,14 @@
 from pathlib import Path
 from datetime import timedelta
 import os
-from configparser import RawConfigParser
+from dotenv import load_dotenv
 
-
-
-config = RawConfigParser()
-config.read('/etc/secret/opentranslate/local.ini')
+# Load environment variables from .env file
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = config.get('app', 'SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,13 +20,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken', 
-     'drf_yasg',
-   
+    'drf_yasg',
     "corsheaders",
     'core',
-     'v1.authentication',
+    'v1.authentication',
     'v1.payments',
-    
 ]
 
 MIDDLEWARE = [
@@ -41,7 +37,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
 
 ROOT_URLCONF = 'Paxable.urls'
@@ -87,7 +82,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -184,7 +178,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-     "http://localhost:5173",
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 
@@ -218,28 +212,28 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config.get('email', 'HOST_NAME')
-EMAIL_PORT = int(config.get('email', 'PORT'))  # Convert to integer
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config.get('email', 'EMAIL_USERNAME')
-EMAIL_HOST_PASSWORD = config.get('email', 'EMAIL_PASSWORD')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
+EMAIL_HOST_USER = os.getenv('EMAIL_USERNAME')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 # Default from email
-DEFAULT_FROM_EMAIL = 'hello@opentranslate.dev'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'hello@opentranslate.dev')
 
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'api/auth/registration/verify-email//'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'api/auth/registration/verify-email/'
 
-STRIPE_PUBLIC_KEY = config.get('stripe', 'PUBLIC_KEY')
-STRIPE_SECRET_KEY = config.get('stripe', 'SECRET_KEY')
-STRIPE_WEBHOOK_SECRET = config.get('stripe', 'WEBHOOK_SECRET')
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
 
 # Add these lines for debugging email issues
-EMAIL_USE_SSL = False
-EMAIL_TIMEOUT = 30  # in seconds
-DEBUG = True  # Set to False in production
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() == 'true'
+EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', 30))
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-GOOGLE_OAUTH2_CLIENT_ID = config.get('google', 'CLIENT_ID', fallback="")
-GOOGLE_OAUTH2_CLIENT_SECRET = config.get('google', 'CLIENT_SECRET', fallback="")
-GOOGLE_OAUTH2_REDIRECT_URI = config.get('google', 'REDIRECT_URI', fallback="")
+GOOGLE_OAUTH2_CLIENT_ID = os.getenv('GOOGLE_OAUTH2_CLIENT_ID', '')
+GOOGLE_OAUTH2_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH2_CLIENT_SECRET', '')
+GOOGLE_OAUTH2_REDIRECT_URI = os.getenv('GOOGLE_OAUTH2_REDIRECT_URI', '')
