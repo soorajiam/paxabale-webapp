@@ -1,4 +1,6 @@
 from .base import *
+import sys
+import dj_database_url
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
