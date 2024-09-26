@@ -40,6 +40,9 @@ const login = async () => {
 
 const loginWithGoogle = () => {
   // Implement Google login logic here
+  const serverUrl = import.meta.env.VITE_API_ROOT_URL
+  console.log('serverUrl: ', serverUrl)
+  window.location.href = `${serverUrl}v1/auth/login/google/`
   console.log('Login with Google clicked')
   // You would typically redirect to your backend's Google OAuth endpoint
   // or use a library like vue3-google-login to handle the OAuth flow
