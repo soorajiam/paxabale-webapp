@@ -2,6 +2,11 @@ from .base import *
 import sys
 import dj_database_url
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 DEBUG = os.getenv("DEBUG", "False") == "True"
 print('FRONTEND_URL: ', os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000'))
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000')
