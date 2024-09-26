@@ -3,6 +3,8 @@ import sys
 import dj_database_url
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
+print('FRONTEND_URL: ', os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000'))
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000')
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
@@ -31,4 +33,3 @@ DATABASES = {
 # Email configuration for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000')
