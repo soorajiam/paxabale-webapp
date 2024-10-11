@@ -18,22 +18,34 @@ class StripeCustomer(models.Model):
             stripe_customer.save()
         return stripe_customer
 
+class RazorpayCustomer(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    razorpay_customer_id = models.CharField(max_length=255, blank=True, null=True)
+
 class Plan(models.Model):
-    name = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=100)
     stripe_price_id = models.CharField(max_length=255, blank=True, null=True)
-    price = models.DecimalField(max_digits=6, decimal_places=2, null=True, default=0.00)
+    razorpay_plan_id = models.CharField(max_length=255, blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     interval = models.CharField(max_length=20, choices=[('month', 'Monthly'), ('year', 'Yearly')], default='month')
     description = models.TextField(blank=True, null=True)
 
 class Subscription(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
     plan = models.ForeignKey(Plan, on_delete=models.SET_NULL, null=True)
-    status = models.CharField(max_length=50, blank=True, null=True, default='inactive')
+    status = models.CharField(max_length=50, default='inactive')
     current_period_end = models.DateTimeField(null=True, blank=True)
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
+    razorpay_subscription_id = models.CharField(max_length=255, blank=True, null=True)
 
 class Payment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=0.00)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=50, default='pending')
     stripe_payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
+    razorpay_payment_id = models.CharField(max_length=255, blank=True, null=True)
+    razorpay_order_id = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.amount} - {self.status}"

@@ -2,45 +2,34 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/userStore';
-import Menubar from 'primevue/menubar';
-import Button from 'primevue/button';
 import { HomeIcon, InformationCircleIcon, CogIcon, EnvelopeIcon, LanguageIcon, GlobeAltIcon, ArrowRightOnRectangleIcon, UserPlusIcon, ArrowLeftOnRectangleIcon, ChartBarIcon } from '@heroicons/vue/24/outline';
 
 const router = useRouter();
 const userStore = useUserStore();
 
 const isAuthenticated = computed(() => userStore.isAuthenticated);
+const isMobileNavOpen = ref(false);
+const isDarkMode = ref(false);
 
 const items = ref([
     {
         label: 'Home',
-        icon: 'heroicon',
+        icon: HomeIcon,
         command: () => router.push('/')
     },
     {
-        label: 'About',
-        icon: 'heroicon',
-        command: () => router.push('/about')
+        label: 'Features',
+        icon: InformationCircleIcon,
+        command: () => router.push('/features')
     },
     {
-        label: 'Services',
-        icon: 'heroicon',
-        items: [
-            {
-                label: 'Translation',
-                icon: 'heroicon',
-                command: () => router.push('/services/translation')
-            },
-            {
-                label: 'Localization',
-                icon: 'heroicon',
-                command: () => router.push('/services/localization')
-            }
-        ]
+        label: 'Pricing',
+        icon: InformationCircleIcon,
+        command: () => router.push('/pricing')
     },
     {
         label: 'Contact',
-        icon: 'heroicon',
+        icon: EnvelopeIcon,
         command: () => router.push('/contact')
     }
 ]);
@@ -62,90 +51,83 @@ const handleDashboard = () => {
     router.push('/dashboard');
 };
 
+const toggleMobileNav = () => {
+    isMobileNavOpen.value = !isMobileNavOpen.value;
+};
+
+const toggleDarkMode = () => {
+    isDarkMode.value = !isDarkMode.value;
+};
+
 </script>
 
 <template>
-    <div class="card">
-        <Menubar :model="items" class="bg-primary">
-            <template #start>
-                <img alt="logo" src="" height="40" class="mr-2" />
-            </template>
-            <template #item="{ item }">
-                <a v-ripple class="flex align-items-center p-menuitem-link">
-                    <component :is="item.icon === 'heroicon' ? 
-                        (item.label === 'Home' ? HomeIcon : 
-                        item.label === 'About' ? InformationCircleIcon : 
-                        item.label === 'Services' ? CogIcon : 
-                        item.label === 'Contact' ? EnvelopeIcon :
-                        item.label === 'Translation' ? LanguageIcon :
-                        item.label === 'Localization' ? GlobeAltIcon : 'span') : 'span'" 
-                        class="mr-2 w-5 h-5" 
-                        aria-hidden="true" 
-                    />
-                    <span class="p-menuitem-text">{{item.label}}</span>
-                </a>
-            </template>
-            <template #end>
-                <div class="flex align-items-center gap-2">
-                    <template v-if="!isAuthenticated">
-                        <Button @click="handleLogin" class="p-button-text flex items-center gap-2">
-                            <ArrowRightOnRectangleIcon class="w-5 h-5" />
-                            <span>Login</span>
-                        </Button>
-                        <Button @click="handleRegister" class="p-button-text flex items-center gap-2">
-                            <UserPlusIcon class="w-5 h-5" />
-                            <span>Register</span>
-                        </Button>
-                    </template>
-                    <template v-else>
-                        <Button @click="handleLogout" class="p-button-text flex items-center gap-2">
-                            <ArrowLeftOnRectangleIcon class="w-5 h-5" />
-                            <span>Logout</span>
-                        </Button>
-                        <Button @click="handleDashboard" class="p-button-text flex items-center gap-2">
-                            <ChartBarIcon class="w-5 h-5" />
-                            <span>Dashboard</span>
-                        </Button>
-                    </template>
-                </div>
-            </template>
-        </Menubar>
-    </div>
+    <section :class="{ 'dark': isDarkMode }" class="bg-white dark:bg-gray-900">
+        <div class="container px-4 mx-auto">
+          <nav class="flex items-center py-6">
+            <a class="text-3xl font-semibold leading-none text-gray-900 dark:text-white" href="#">
+              <img class="h-10" src="" alt="" width="auto">
+            </a>
+            <div class="lg:hidden ml-auto">
+              <button @click="toggleMobileNav" class="flex items-center py-2 px-3 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 rounded border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600">
+                <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <title>Mobile menu</title>
+                  <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+                </svg>
+              </button>
+            </div>
+            <ul class="hidden lg:flex items-center space-x-12 ml-auto mr-12">
+              <li v-for="item in items" :key="item.label">
+                <a class="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white" href="#" @click="item.command">{{ item.label }}</a>
+              </li>
+            </ul>
+            <div class="hidden lg:block">
+              <button v-if="!isAuthenticated" @click="handleLogin" class="mr-2 inline-block px-4 py-3 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold leading-none border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600 rounded">Log In</button>
+              <button v-if="!isAuthenticated" @click="handleRegister" class="inline-block px-4 py-3 text-xs font-semibold leading-none bg-blue-600 hover:bg-blue-700 text-white rounded">Sign Up</button>
+              <button v-if="isAuthenticated" @click="handleLogout" class="mr-2 inline-block px-4 py-3 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold leading-none border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600 rounded">Log Out</button>
+              <button v-if="isAuthenticated" @click="handleDashboard" class="inline-block px-4 py-3 text-xs font-semibold leading-none bg-blue-600 hover:bg-blue-700 text-white rounded">Dashboard</button>
+            </div>
+            <button @click="toggleDarkMode" class="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700">
+              <svg v-if="isDarkMode" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            </button>
+          </nav>
+        </div>
+        <div :class="{'block': isMobileNavOpen, 'hidden': !isMobileNavOpen}" class="fixed top-0 left-0 bottom-0 w-5/6 max-w-sm z-50">
+          <div @click="toggleMobileNav" class="fixed inset-0 bg-gray-800 opacity-25"></div>
+          <nav class="relative flex flex-col py-6 px-6 w-full h-full bg-white dark:bg-gray-900 border-r dark:border-gray-700 overflow-y-auto">
+            <div class="flex items-center mb-8">
+              <a class="mr-auto text-3xl font-semibold leading-none text-gray-900 dark:text-white" href="#">
+                <img class="h-10" src="" alt="" width="auto">
+              </a>
+              <button @click="toggleMobileNav">
+                <svg class="h-6 w-6 text-gray-400 cursor-pointer hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <div>
+              <ul>
+                <li v-for="item in items" :key="item.label" class="mb-1">
+                  <a @click="item.command" class="block p-4 text-sm text-gray-500 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-300" href="#">{{ item.label }}</a>
+                </li>
+              </ul>
+              <div class="mt-4 pt-6 border-t border-gray-100 dark:border-gray-700">
+                <button v-if="!isAuthenticated" @click="handleRegister" class="block w-full px-4 py-3 mb-3 text-xs text-center font-semibold leading-none bg-blue-600 hover:bg-blue-700 text-white rounded">Sign Up</button>
+                <button v-if="!isAuthenticated" @click="handleLogin" class="block w-full px-4 py-3 mb-2 text-xs text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold leading-none border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600 rounded">Log In</button>
+                <button v-if="isAuthenticated" @click="handleLogout" class="block w-full px-4 py-3 mb-3 text-xs text-center font-semibold leading-none bg-blue-600 hover:bg-blue-700 text-white rounded">Log Out</button>
+                <button v-if="isAuthenticated" @click="handleDashboard" class="block w-full px-4 py-3 mb-2 text-xs text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold leading-none border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600 rounded">Dashboard</button>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </section>
 </template>
 
 <style scoped>
-.p-menubar {
-    padding: 0.5rem 1rem;
-    border-radius: 0;
-}
-
-.p-menubar .p-menuitem-link {
-    padding: 0.75rem 1rem;
-}
-
-.p-menubar .p-menuitem-icon {
-    color: var(--primary-color-text);
-}
-
-.p-menubar .p-menuitem-text {
-    color: var(--primary-color-text);
-}
-
-.p-menubar .p-submenu-list {
-    background-color: var(--primary-color);
-    border: none;
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
-}
-
-.p-menubar .p-menuitem:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.p-button-text {
-    color: var(--primary-color-text) !important;
-}
-
-.p-button-text:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-}
+/* Removed unnecessary styles */
 </style>
