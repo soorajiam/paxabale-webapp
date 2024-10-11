@@ -8,16 +8,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
-print('FRONTEND_URL: ', os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000'))
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000')
+print('FRONTEND_URL: ', os.getenv('FRONTEND_URL', 'http://localhost:5173'))
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
 
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1, localhost, http://localhost:5173").split(",")
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend', 'dist'),
-]
 
 # Configure development database
 # if DEVELOPMENT_MODE is True:

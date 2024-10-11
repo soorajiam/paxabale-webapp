@@ -159,6 +159,6 @@ class GoogleCallbackView(APIView):
         }
         
         full_redirect_url = f"{redirect_url}?{urlencode(params)}"
-        return redirect(full_redirect_url)
+        return redirect(full_redirect_url, permanent=False)
 
 

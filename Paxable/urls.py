@@ -38,19 +38,19 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('api/admin/', admin.site.urls),
-    path('api/v1/auth/', include('v1.authentication.urls')),
+    path('admin/', admin.site.urls),
+    path('v1/auth/', include('v1.authentication.urls')),
     
     # OpenAPI documentation URLs
-    path('api/swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     
     # Serve Nuxt app for all non-API routes
-    re_path(r'^(?!api/).*$', never_cache(TemplateView.as_view(template_name='index.html')), name='vue3-app'),
+    # re_path(r'^(?!api/).*$', never_cache(TemplateView.as_view(template_name='index.html')), name='vue3-app'),
     
     # Include payments URLs
-    path('api/payments/', include('v1.payments.urls')),
+    path('payments/', include('v1.payments.urls')),
 ]
 
 # if settings.DEBUG:
