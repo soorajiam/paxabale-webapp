@@ -19,7 +19,7 @@ jobs:
           KEY: ${{ secrets.DO_PRIVATE_KEY}}
           script: |
             source pax-env/bin/activate
-            cd paxabale-webap/
+            cd paxabale-webapp/
             git pull origin main
             pip install -r requirements.txt
             python manage.py migrate
